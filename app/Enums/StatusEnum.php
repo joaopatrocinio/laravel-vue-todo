@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum StatusEnum {
-    case PENDING;
-    case COMPLETED;
+enum StatusEnum: int {
+    case PENDING = 1;
+    case COMPLETED = 2;
 }
