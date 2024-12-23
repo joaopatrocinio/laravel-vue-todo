@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\StatusEnum;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Http\Resources\TaskResource;
 use App\Models\Task;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
@@ -103,6 +105,60 @@ class TaskController extends Controller
         return response()->json([
             'message' => 'Delete complete.',
             'payload' => null
+        ]);
+    }
+
+    public function markAsCompleted(Request $request): JsonResponse
+    {
+        $validated = $request->only(["id"]);
+        $updatedTask = Task::find($validated["id"]);
+
+        if (empty($updatedTask)) {
+            return response()->json([
+                'message' => 'Task not found.',
+                'payload' => null
+            ], 404);
+        }
+
+        $updatedTask->status_id = StatusEnum::COMPLETED->value;
+
+        if (!$updatedTask->save()) {
+            return response()->json([
+                'message' => 'Nothing was updated.',
+                'payload' => null
+            ], 422);
+        }
+        
+        return response()->json([
+            'message' => 'Update complete.',
+            'payload' => new TaskResource($updatedTask)
+        ]);
+    }
+
+    public function markAsPending(Request $request): JsonResponse
+    {
+        $validated = $request->only(["id"]);
+        $updatedTask = Task::find($validated["id"]);
+
+        if (empty($updatedTask)) {
+            return response()->json([
+                'message' => 'Task not found.',
+                'payload' => null
+            ], 404);
+        }
+
+        $updatedTask->status_id = StatusEnum::PENDING->value;
+
+        if (!$updatedTask->save()) {
+            return response()->json([
+                'message' => 'Nothing was updated.',
+                'payload' => null
+            ], 422);
+        }
+        
+        return response()->json([
+            'message' => 'Update complete.',
+            'payload' => new TaskResource($updatedTask)
         ]);
     }
 }

@@ -62,4 +62,30 @@ class TaskTest extends TestCase
         $response = $this->delete('/api/tasks/2');
         $response->assertStatus(422);
     }
+    public function test_mark_completed(): void
+    {
+        $response = $this->post('/api/tasks/markAsCompleted', [
+            "id" => "1",
+        ]);
+        $response->assertStatus(200);
+
+        // Test with task that doesn't exist
+        $response = $this->post('/api/tasks/markAsCompleted', [
+            "id" => "2",
+        ]);
+        $response->assertStatus(404);
+    }
+    public function test_mark_pending(): void
+    {
+        $response = $this->post('/api/tasks/markAsPending', [
+            "id" => "1",
+        ]);
+        $response->assertStatus(200);
+
+        // Test with task that doesn't exist
+        $response = $this->post('/api/tasks/markAsPending', [
+            "id" => "2",
+        ]);
+        $response->assertStatus(404);
+    }
 }
