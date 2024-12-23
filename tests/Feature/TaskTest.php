@@ -33,6 +33,10 @@ class TaskTest extends TestCase
     {
         $response = $this->get('/api/tasks/1');
         $response->assertStatus(200);
+
+        // Test the not found response
+        $response = $this->get('/api/tasks/2');
+        $response->assertStatus(404);
     }
     public function test_update(): void
     {
@@ -41,10 +45,21 @@ class TaskTest extends TestCase
             'status_id' => 2
         ]);
         $response->assertStatus(200);
+
+        // Test updating a task that doesn't exist
+        $response = $this->put('/api/tasks/2', [
+            'title' => 'teste',
+            'status_id' => 2
+        ]);
+        $response->assertStatus(404);
     }
     public function test_destroy(): void
     {
         $response = $this->delete('/api/tasks/1');
         $response->assertStatus(200);
+
+        // Test delete task that doesn't exist
+        $response = $this->delete('/api/tasks/2');
+        $response->assertStatus(422);
     }
 }
