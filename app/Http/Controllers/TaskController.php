@@ -13,7 +13,12 @@ use Illuminate\Http\Request;
 class TaskController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * @OA\Get(
+     *      path="/api/tasks",
+     *      summary="Get all tasks",
+     *      tags={"Tasks"},
+     *      @OA\Response(response="200", description="List complete.")
+     * )
      */
     public function index(): JsonResponse
     {
@@ -26,7 +31,20 @@ class TaskController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @OA\Post(
+     *      path="/api/tasks",
+     *      summary="Add a new task",
+     *      tags={"Tasks"},
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(property="title", type="string", example="title"),
+     *              @OA\Property(property="status_id", type="integer", example=1)
+     *          )
+     *      ),
+     *      @OA\Response(response="200", description="Create complete.")
+     * )
      */
     public function store(StoreTaskRequest $request): JsonResponse
     {
@@ -40,7 +58,21 @@ class TaskController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * @OA\Get(
+     *      path="/api/tasks/{id}",
+     *      summary="Get a specific task",
+     *      tags={"Tasks"},
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="Task ID",
+     *          in="path",
+     *          required=true,
+     *          @OA\Schema(
+     *             type="integer"
+     *          )                
+     *      ),
+     *      @OA\Response(response="200", description="List complete.")
+     * )
      */
     public function show(string $id): JsonResponse
     {
@@ -48,8 +80,7 @@ class TaskController extends Controller
 
         if (empty($task)) {
             return response()->json([
-                'message' => 'Task not found.',
-                'payload' => null
+                'message' => 'Task not found.'
             ], 404);
         }
 
@@ -60,7 +91,29 @@ class TaskController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * @OA\Put(
+     *      path="/api/tasks/{id}",
+     *      summary="Update a task",
+     *      tags={"Tasks"},
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="Task ID",
+     *          in="path",
+     *          required=true,
+     *          @OA\Schema(
+     *             type="integer"
+     *          )                
+     *      ),
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(property="title", type="string", example="title"),
+     *              @OA\Property(property="status_id", type="integer", example=1)
+     *          )
+     *      ),
+     *      @OA\Response(response="200", description="Update complete.")
+     * )
      */
     public function update(UpdateTaskRequest $request, string $id): JsonResponse
     {
@@ -69,8 +122,7 @@ class TaskController extends Controller
 
         if (empty($updatedTask)) {
             return response()->json([
-                'message' => 'Task not found.',
-                'payload' => null
+                'message' => 'Task not found.'
             ], 404);
         }
 
@@ -78,8 +130,7 @@ class TaskController extends Controller
 
         if (!$updatedTask->save()) {
             return response()->json([
-                'message' => 'Nothing was updated.',
-                'payload' => null
+                'message' => 'Nothing was updated.'
             ], 422);
         }
         
@@ -91,23 +142,50 @@ class TaskController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * @OA\Delete(
+     *      path="/api/tasks/{id}",
+     *      summary="Delete a specific task",
+     *      tags={"Tasks"},
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="Task ID",
+     *          in="path",
+     *          required=true,
+     *          @OA\Schema(
+     *             type="integer"
+     *          )                
+     *      ),
+     *      @OA\Response(response="200", description="Delete complete.")
+     * )
      */
     public function destroy(string $id): JsonResponse
     {
         if (Task::destroy($id) <= 0) {
             return response()->json([
-                'message' => 'Nothing was deleted.',
-                'payload' => null
+                'message' => 'Nothing was deleted.'
             ], 422);
         }
         
         return response()->json([
-            'message' => 'Delete complete.',
-            'payload' => null
+            'message' => 'Delete complete.'
         ]);
     }
 
+    /**
+     * @OA\Post(
+     *      path="/api/tasks/markAsCompleted",
+     *      summary="Mark a task as completed",
+     *      tags={"Tasks"},
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(property="id", type="integer", example=1)
+     *          )
+     *      ),
+     *      @OA\Response(response="200", description="Update complete.")
+     * )
+     */
     public function markAsCompleted(Request $request): JsonResponse
     {
         $validated = $request->only(["id"]);
@@ -115,8 +193,7 @@ class TaskController extends Controller
 
         if (empty($updatedTask)) {
             return response()->json([
-                'message' => 'Task not found.',
-                'payload' => null
+                'message' => 'Task not found.'
             ], 404);
         }
 
@@ -124,8 +201,7 @@ class TaskController extends Controller
 
         if (!$updatedTask->save()) {
             return response()->json([
-                'message' => 'Nothing was updated.',
-                'payload' => null
+                'message' => 'Nothing was updated.'
             ], 422);
         }
         
@@ -135,6 +211,21 @@ class TaskController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Post(
+     *      path="/api/tasks/markAsPending",
+     *      summary="Mark a task as pending",
+     *      tags={"Tasks"},
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(property="id", type="integer", example=1)
+     *          )
+     *      ),
+     *      @OA\Response(response="200", description="Update complete.")
+     * )
+     */
     public function markAsPending(Request $request): JsonResponse
     {
         $validated = $request->only(["id"]);
@@ -142,8 +233,7 @@ class TaskController extends Controller
 
         if (empty($updatedTask)) {
             return response()->json([
-                'message' => 'Task not found.',
-                'payload' => null
+                'message' => 'Task not found.'
             ], 404);
         }
 
@@ -151,8 +241,7 @@ class TaskController extends Controller
 
         if (!$updatedTask->save()) {
             return response()->json([
-                'message' => 'Nothing was updated.',
-                'payload' => null
+                'message' => 'Nothing was updated.'
             ], 422);
         }
         
