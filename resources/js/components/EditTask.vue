@@ -1,7 +1,7 @@
 <script setup>
 import axios from 'axios';
 import Button from './Button.vue';
-import { ref } from 'vue';
+import { ref, useTemplateRef } from 'vue';
 import Loading from './Loading.vue';
 
 const props = defineProps({
@@ -11,6 +11,8 @@ const props = defineProps({
 const loading = ref(true);
 const title = ref("");
 const status_id = ref(null);
+const textarea = useTemplateRef("textarea");
+const textarea_error = useTemplateRef("textarea-error");
 const emit = defineEmits(["close"]);
 
 getTask(props.id);
@@ -30,6 +32,13 @@ function getTask() {
 }
 
 function updateTask() {
+
+    if (!title.value) {
+        textarea.value.classList.add("border-rose-500");
+        textarea_error.value.innerText = "Field cannot be empty.";
+        return;
+    }
+
     loading.value = true;
     axios.put(`/api/tasks/${props.id}`, {
             title: title.value,
@@ -45,6 +54,11 @@ function updateTask() {
             emit("close");
         });
 }
+
+function clearErrors() {
+    textarea.value.classList.remove("border-rose-500");
+    textarea_error.value.innerText = "";
+}
 </script>
 
 <template>
@@ -58,7 +72,8 @@ function updateTask() {
             <br />
             <div class="flex flex-col my-4">
                 <label for="title">Title:</label>
-                <textarea id="title" v-model="title" class="border w-max"></textarea>
+                <textarea ref="textarea" @keyup="clearErrors" id="title" v-model="title" class="border w-max"></textarea>
+                <span ref="textarea-error" class="text-rose-500"></span>
             </div>
             <Button
                 class="float-right"

@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, useTemplateRef } from 'vue';
 import Modal from './Modal.vue'
 
 const props = defineProps({
@@ -7,8 +7,19 @@ const props = defineProps({
 })
 
 const emit = defineEmits(["close"]);
+const textarea = useTemplateRef("textarea");
+const textarea_error = useTemplateRef("textarea-error");
 
 function addTask() {
+
+    console.log(task.value.title)
+
+    if (!task.value.title) {
+        textarea.value.classList.add("border-rose-500");
+        textarea_error.value.innerText = "Field cannot be empty.";
+        return;
+    }
+
     axios.post("/api/tasks", task.value)
         .then(function (response) {
             console.log(response)
@@ -27,6 +38,11 @@ const task = ref({
     status_id: 1
 });
 
+function clearErrors() {
+    textarea.value.classList.remove("border-rose-500");
+    textarea_error.value.innerText = "";
+}
+
 </script>
 
 <template>
@@ -43,7 +59,9 @@ const task = ref({
             <template #body>
                 <br>
                 <label for="title">Title:</label>
-                <textarea id="title" v-model="task.title" class="border w-max"></textarea>
+                <textarea ref="textarea" @keyup="clearErrors" id="title" v-model="task.title" class="border w-max"></textarea>
+                <br />
+                <span ref="textarea-error" class="text-rose-500"></span>
             </template>
             <template #footer>
                 <button
