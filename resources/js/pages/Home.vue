@@ -17,9 +17,13 @@ function onClose() {
     refresh.value = true;
 }
 
-function edit(id) {
+function onEdit(id) {
     editId.value = id;
     showEdit.value = true;
+}
+
+function onDoneRefresh() {
+    refresh.value = false;
 }
 
 </script>
@@ -30,7 +34,7 @@ function edit(id) {
             <h1 class="text-xl font-bold">To-do List</h1>
             <Button @click="showAdd = true" color="green">New Task</Button>
         </div>
-        <TaskList :refresh @edit="edit" />
+        <TaskList :refresh @edit="onEdit" @done-refresh="onDoneRefresh" />
     </main>
     <AddTaskModal :show="showAdd" @close="onClose" />
     <EditTask v-if="showEdit" :id="editId" @close="onClose" />

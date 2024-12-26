@@ -26,6 +26,7 @@ const props = defineProps({
 })
 const data = ref(null);
 const checkedTasks = ref([]);
+const emit = defineEmits(["doneRefresh"]);
 
 watch(() => props.refresh, () => getTasks(), { deep: true });
 
@@ -41,6 +42,9 @@ function getTasks() {
         })
         .catch(function (error) {
             console.log(error);
+        })
+        .finally(function () {
+            emit("doneRefresh");
         });
 }
 
