@@ -26,6 +26,10 @@ $ ./vendor/bin/sail npm install
 $ ./vendor/bin/sail npm run dev
 ```
 
+The application should now be available at [http://localhost](http://localhost)
+
+To shutdown the application, Ctrl-C out of the `npm run dev` command, and run the command `./vendor/bin/sail down`
+
 ### Documentation
 The backend API is documented at `/api/documentation` with Swagger UI.
 
