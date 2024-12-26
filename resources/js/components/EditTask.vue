@@ -1,5 +1,72 @@
+<script setup>
+import axios from 'axios';
+import Button from './Button.vue';
+import { ref } from 'vue';
+import Loading from './Loading.vue';
+
+const props = defineProps({
+    id: Number
+});
+
+const loading = ref(true);
+const title = ref("");
+const status_id = ref(null);
+const emit = defineEmits(["close"]);
+
+getTask(props.id);
+
+function getTask() {
+    axios.get(`/api/tasks/${props.id}`)
+        .then(function (response) {
+            title.value = response.data.payload.title;
+            status_id.value = response.data.payload.status_id;
+        })
+        .catch(function (error) {
+            console.log(error)
+        })
+        .finally(function () {
+            loading.value = false;
+        });
+}
+
+function updateTask() {
+    loading.value = true;
+    axios.put(`/api/tasks/${props.id}`, {
+            title: title.value,
+            status_id: status_id.value
+        })
+        .then(function (response) {
+            console.log(response);
+        })
+        .catch(function (error) {
+            console.log(error)
+        })
+        .finally(function () {
+            emit("close");
+        });
+}
+</script>
+
 <template>
-    <div class="bg-white border border-black">
-        Edit
+    <div class="border border-black bg-white my-4 p-4">
+        <div v-if="!loading">
+            <h1 class="font-bold float-left">Edit task</h1>
+            <button
+                class="float-right"
+                @click="$emit('close')"
+            >X</button>
+            <br />
+            <div class="flex flex-col my-4">
+                <label for="title">Title:</label>
+                <textarea id="title" v-model="title" class="border w-max"></textarea>
+            </div>
+            <Button
+                class="float-right"
+                color="green"
+                @click="updateTask"
+            >Update</Button>
+        </div>
+        <Loading v-else />
+        <br>
     </div>
 </template>
