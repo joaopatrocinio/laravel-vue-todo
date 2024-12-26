@@ -23,12 +23,12 @@ $ ./vendor/bin/sail up -d
 $ ./vendor/bin/sail artisan key:generate
 $ ./vendor/bin/sail artisan migrate:fresh --seed
 $ ./vendor/bin/sail npm install
-$ ./vendor/bin/sail npm run dev
+$ ./vendor/bin/sail npm run build
 ```
 
 The application should now be available at [http://localhost](http://localhost)
 
-To shutdown the application, Ctrl-C out of the `npm run dev` command, and run the command `./vendor/bin/sail down`
+To shutdown the application run the command `./vendor/bin/sail down`
 
 ### Documentation
 The backend API is documented at [http://localhost/api/documentation](http://localhost/api/documentation) with Swagger UI.
