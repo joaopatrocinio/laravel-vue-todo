@@ -17,6 +17,7 @@ function addTask() {
             console.log(error);
         })
         .finally(function () {
+            task.value.title = undefined;
             emit("close");
         });
 }
