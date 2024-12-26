@@ -31,7 +31,7 @@ The application should now be available at [http://localhost](http://localhost)
 To shutdown the application, Ctrl-C out of the `npm run dev` command, and run the command `./vendor/bin/sail down`
 
 ### Documentation
-The backend API is documented at `/api/documentation` with Swagger UI.
+The backend API is documented at [http://localhost/api/documentation](http://localhost/api/documentation) with Swagger UI.
 
 ### Testing
-Feature tests are available with the command `sail artisan test`
+Feature tests are available with the command `./vendor/bin/sail artisan test`
